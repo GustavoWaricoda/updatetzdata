@@ -23,7 +23,7 @@ else
     if [[ -f tzdata-2020d-1.el6.noarch && -f tzdata-java-2020d-1.el6.noarch ]]
     then
 
-        tput setaf 2; echo -e "O arquivo de atualização já existe no sistema, pulando etapa de download.\n"; tput sgr0
+        tput setaf 2; echo -e "O arquivo de verificação e atualização da penelope já existe no sistema, pulando etapa de download.\n"; tput sgr0
 
     else
 
