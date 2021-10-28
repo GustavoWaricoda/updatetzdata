@@ -2,9 +2,9 @@
 
 TZDATA1=$(rpm -qa |grep tzdata-2) #Coletando a versão do tzdata do sistema
 TZDATA2=$(rpm -qa |grep tzdata-java) #Coletando a versão do java do tzdata
-TZDATAPENELOPE=$(/opt/jre1.8.0_25/bin/java -jar /tmp/tzupdater.jar -V |grep JRE) #Coletando a versão do tzdata da penelope
 
-tput setaf 4; echo -e "Iniciando processo de verificações e atualizações!\n"; tput sgr0
+
+tput setaf 3; echo -e "Iniciando processo de verificações e atualizações!\n"; tput sgr0
 
 #Verifica se a versão do tzdata do sistema do java é a mais recente, se for ele pula o processo, caso contrário, inicia o processo de atualização. 
 if [[ $TZDATA1 == "tzdata-2020d-1.el6.noarch" && $TZDATA2 == "tzdata-java-2020d-1.el6.noarch" ]]
@@ -37,12 +37,12 @@ else
     yum update tzdata-2020d-1.el6.noarch.rpm -y
     yum update tzdata-java-2020d-1.el6.noarch.rpm -y
    
-    tput setaf 6; echo -e 'Verificando a hora...\n'; tput sgr0
+    tput setaf 6; echo -e '\nVerificando a hora...'; tput sgr0
     hwclock -w
     date
     hwclock
 
-    tput setaf 6; echo -e 'Confira a versão atual para validar a atualização...\n'; tput sgr0
+    tput setaf 6; echo -e '\nConfira a versão atual para validar a atualização...'; tput sgr0
     rpm -qa |grep tzdata
 
     VERIFICACAOSISTEMA=$(rpm -qa |grep tzdata) #Coleta qual a versão atual do tzdata do TC
@@ -50,28 +50,18 @@ else
     if [[ $VERIFICACAOSISTEMA =~ "tzdata-2020" ]]; 
     then
 
-        tput setaf 2; echo -e "Atualização do sistema realizada com sucesso!\n"; tput sgr0
+        tput setaf 2; echo -e "\nAtualização do sistema realizada com sucesso!\n"; tput sgr0
     
     else
 
-        tput setaf 1; echo -e "Atualização do sistema falhou!\n"; tput sgr0
+        tput setaf 1; echo -e "\nAtualização do sistema falhou!\n"; tput sgr0
 
     fi
 
 fi
 
-#Verifica qual a versão do tzdata da penelope que foi inserido na variavel, se for a 2021 pula o processo, caso contrário, inicia a atualização.
-if [[ $TZDATAPENELOPE =~ "tzdata2021" ]]; 
-then
 
-   tput setaf 2; echo -e "Tzdata da Penelope já está atualizado!\n"; tput sgr0
-
-else
-
-    tput setaf 5; echo -e "Tzdata da Penelope está desatualizado! Iniciando os processos.\n"; tput sgr0
-
-    #Verifica se existem os arquivos de atualização no sistema, se tiver pula o processo de download, caso contrário, faz o download. 
-    if [[ -f "/tmp/tzupdater.jar" ]]
+if [[ -f "/tmp/tzupdater.jar" ]]
     then
 
         tput setaf 6; echo -e "O arquivo de atualização já existe no sistema, pulando etapa de download.\n"; tput sgr0
@@ -84,16 +74,30 @@ else
         tput setaf 6; echo -e 'Mudandos os arquivos necessários de local...\n'; tput sgr0   
         mv tzupdater.jar /tmp
 
-    fi
+fi
 
-    tput setaf 5; echo -e 'Instalando atualizacao da Penelope...\n'; tput sgr0
+TZDATAPENELOPE=$(/opt/jre1.8.0_25/bin/java -jar /tmp/tzupdater.jar -V |grep JRE) #Coletando a versão do tzdata da penelope
+
+#Verifica qual a versão do tzdata da penelope que foi inserido na variavel, se for a 2021 pula o processo, caso contrário, inicia a atualização.
+if [[ $TZDATAPENELOPE =~ "tzdata2021" ]]; 
+then
+
+   tput setaf 2; echo -e "Tzdata da Penelope já está atualizado!\n"; tput sgr0
+
+else
+
+    tput setaf 5; echo -e "Tzdata da Penelope está desatualizado! Iniciando os processos.\n"; tput sgr0
+
+    #Verifica se existem os arquivos de atualização no sistema, se tiver pula o processo de download, caso contrário, faz o download. 
+
+    tput setaf 5; echo -e 'Instalando atualizacao da Penelope...'; tput sgr0
     /opt/jre1.8.0_25/bin/java -jar /tmp/tzupdater.jar -f
 
-    tput setaf 6; echo -e 'Reiniciando serviço da Penelope\n'; tput sgr0
+    tput setaf 6; echo -e '\nReiniciando serviço da Penelope'; tput sgr0
     initctl stop adapter
     initctl start adapter
 
-    tput setaf 6; echo -e 'Confira a versão atual para validar a atualização...\n'; tput sgr0
+    tput setaf 6; echo -e '\nConfira a versão atual para validar a atualização...'; tput sgr0
     /opt/jre1.8.0_25/bin/java -jar /tmp/tzupdater.jar -V
 
     VERIFICACAOPENELOPE=$(/opt/jre1.8.0_25/bin/java -jar /tmp/tzupdater.jar -V |grep JRE) #Coleta qual a versão atual do tzdata da penelope
@@ -101,11 +105,11 @@ else
     if [[ $VERIFICACAOPENELOPE =~ "tzdata2021" ]]; 
     then
 
-        tput setaf 2; echo "Atualização da penelope realizada com sucesso!"; tput sgr0
+        tput setaf 2; echo -e "\nAtualização da penelope realizada com sucesso!"; tput sgr0
     
     else
 
-        tput setaf 1; echo "Atualização da penelope falhou!"; tput sgr0
+        tput setaf 1; echo -e "\nAtualização da penelope falhou!"; tput sgr0
     fi
 
 fi
